@@ -1,6 +1,6 @@
-# Plank CMS - React Client
+# Plank CMS - Client
 
-React client for the [Plank CMS](https://github.com/am25-labs/plank-cms) headless API. Works with Next.js App Router, Astro, or any React project.
+Client for the [Plank CMS](https://github.com/am25-labs/plank-cms) headless API. Works with Next.js App Router, Astro, or any React project.
 
 ## Installation
 
