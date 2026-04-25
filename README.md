@@ -5,7 +5,7 @@ React client for the [Plank CMS](https://github.com/am25-labs/plank-cms) headles
 ## Installation
 
 ```bash
-pnpm add @am25/plank-react-client
+pnpm add @am25/plank-client
 ```
 
 ## Setup
@@ -14,7 +14,7 @@ Create a client instance and export it for reuse across your project:
 
 ```ts
 // lib/plank.ts
-import { createPlankClient } from "@am25/plank-react-client";
+import { createPlankClient } from "@am25/plank-client";
 
 const plank = createPlankClient({
   url: process.env.PLANK_URL!,
