@@ -19,6 +19,8 @@ import { createPlankClient } from "@am25/plank-client";
 const plank = createPlankClient({
   url: process.env.PLANK_URL!,
   token: process.env.PLANK_TOKEN!,
+  // optional: attach a default locale to all public API requests when not overridden
+  // defaultLocale: 'en',
 });
 
 export default plank;
@@ -52,6 +54,18 @@ const { data } = await plank.collection("posts").findMany({
   // any field defined in your content type works as an equality filter
   category: "news",
 });
+```
+
+Locale / per-request override:
+
+```ts
+// if you configured a `defaultLocale` on the client, you can still override it per-request
+const { data: esPosts } = await plank
+  .collection("posts")
+  .findMany({ locale: "es" });
+const { data: frPosts } = await plank
+  .collection("posts")
+  .findMany({ locale: "fr" });
 ```
 
 Fetch a single entry by ID:
@@ -140,14 +154,15 @@ const post = await plank.collection<Post>("posts").findOne("entry-id");
 
 ## Query params reference
 
-| Param         | Type                              | Default       | Description                               |
-| ------------- | --------------------------------- | ------------- | ----------------------------------------- |
-| `page`        | `number`                          | `1`           | Page number                               |
-| `limit`       | `number`                          | `20`          | Entries per page (max 100)                |
-| `status`      | `'published' \| 'draft' \| 'all'` | `'published'` | Filter by status                          |
-| `sort`        | `string`                          | —             | Field name to sort by                     |
-| `order`       | `'asc' \| 'desc'`                 | —             | Sort direction                            |
-| `[fieldname]` | `string \| number`                | —             | Equality filter on any content type field |
+| Param         | Type                              | Default       | Description                                                   |
+| ------------- | --------------------------------- | ------------- | ------------------------------------------------------------- |
+| `page`        | `number`                          | `1`           | Page number                                                   |
+| `limit`       | `number`                          | `20`          | Entries per page (max 100)                                    |
+| `status`      | `'published' \| 'draft' \| 'all'` | `'published'` | Filter by status                                              |
+| `sort`        | `string`                          | —             | Field name to sort by                                         |
+| `order`       | `'asc' \| 'desc'`                 | —             | Sort direction                                                |
+| `[fieldname]` | `string \| number`                | —             | Equality filter on any content type field                     |
+| `locale`      | `string`                          | —             | Request a localized version of localizable fields (e.g. `es`) |
 
 ---
 
