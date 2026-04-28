@@ -1,6 +1,6 @@
 {
   "name": "@am25/plank-client",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Client for the Plank CMS headless API.",
   "type": "module",
   "main": "dist/index.js",
