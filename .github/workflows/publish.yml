@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Publish @am25/plank-client
+      - name: Publish @plank-cms/client
         run: pnpm publish --provenance --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

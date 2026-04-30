@@ -1,11 +1,11 @@
 # Plank CMS - Client
 
-Client for the [Plank CMS](https://github.com/am25-labs/plank-cms) headless API. Works with Next.js App Router, Astro, or any React project.
+Client for the [Plank CMS](https://github.com/plank-cms/plank) headless API. Works with Next.js App Router, Astro, or any React project.
 
 ## Installation
 
 ```bash
-pnpm add @am25/plank-client
+pnpm add @plank-cms/client
 ```
 
 ## Setup
@@ -14,7 +14,7 @@ Create a client instance and export it for reuse across your project:
 
 ```ts
 // lib/plank.ts
-import { createPlankClient } from "@am25/plank-client";
+import { createPlankClient } from "@plank-cms/client";
 
 const plank = createPlankClient({
   url: process.env.PLANK_URL!,

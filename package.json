@@ -1,5 +1,5 @@
 {
-  "name": "@am25/plank-client",
+  "name": "@plank-cms/client",
   "version": "0.2.0",
   "description": "Client for the Plank CMS headless API.",
   "type": "module",
@@ -18,13 +18,13 @@
     "url": "https://alemartir.com"
   },
   "license": "MIT",
-  "homepage": "https://github.com/am25-labs/plank-client#readme",
+  "homepage": "https://github.com/plank-cms/client#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/am25-labs/plank-client.git"
+    "url": "git+https://github.com/plank-cms/client.git"
   },
   "bugs": {
-    "url": "https://github.com/am25-labs/plank-client/issues"
+    "url": "https://github.com/plank-cms/client/issues"
   },
   "keywords": [
     "cms",
