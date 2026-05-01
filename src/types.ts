@@ -52,3 +52,9 @@ export interface PlankClientConfig {
   token: string;
   defaultLocale?: string;
 }
+
+export interface NavigationItem {
+  label: string;
+  href: string;
+  items?: NavigationItem[];
+}
