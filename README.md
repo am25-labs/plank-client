@@ -1,6 +1,6 @@
 # Plank CMS - Client
 
-Client for the [Plank CMS](https://github.com/plank-cms/plank) headless API. Works with Next.js App Router, Astro, or any React project.
+Client for the [Plank CMS](https://github.com/plank-cms/plank) headless API. Framework-agnostic and compatible with Next.js App Router, Astro, or any project with `fetch`.
 
 ## Installation
 
@@ -144,12 +144,53 @@ const url = plank.buildUrl("/posts", {
 
 ### Field selection
 
-The current public API returns the full serialized entry shape for each content type.
+Use `fields` or `select` to include only specific top-level serialized fields:
 
-Server-side field selection or exclusion is not available yet, so params like `fields`,
-`select`, or `exclude` are not supported by the API today.
+```ts
+const { data } = await plank.collection("posts").findMany({
+  status: "published",
+  fields: ["id", "title", "slug", "cover"],
+});
+```
 
-If you only need a subset of fields in your app, narrow the type locally:
+```ts
+const post = await plank.collection("posts").findOne("entry-id", {
+  select: ["id", "title", "cover"],
+});
+```
+
+Exclude specific top-level fields from the serialized response:
+
+```ts
+const { data } = await plank.collection("posts").findMany({
+  status: "published",
+  exclude: ["body", "author", "editor"],
+});
+```
+
+Works for collection items, single types, and single-entry fetches:
+
+```ts
+const post = await plank.collection("posts").findOne(
+  "entry-id",
+  {
+    fields: ["id", "title", "cover", "published_at"],
+  },
+  { cache: "no-store" },
+);
+
+const homepage = await plank.single("homepage").find({
+  exclude: ["updated_at", "editor"],
+});
+```
+
+Notes:
+
+- `fields`, `select`, and `exclude` are top-level only.
+- They apply to the public serialized response shape, not raw database columns.
+- `select` is an alias of `fields`.
+
+You can still narrow the response locally with TypeScript when useful:
 
 ```ts
 type PostCard = {
@@ -161,21 +202,8 @@ type PostCard = {
 
 const { data } = await plank.collection<PostCard>("posts").findMany({
   status: "published",
-  limit: 6,
+  fields: ["id", "title", "slug", "cover"],
 });
-```
-
-Or map the full response into a smaller UI model:
-
-```ts
-const { data } = await plank.collection<Post>("posts").findMany();
-
-const cards = data.map((post) => ({
-  id: post.id,
-  title: post.title,
-  slug: post.slug,
-  image: post.cover?.url ?? null,
-}));
 ```
 
 ### Drafts
@@ -183,7 +211,7 @@ const cards = data.map((post) => ({
 ```ts
 const draft = await plank
   .collection("posts")
-  .findOne("entry-id", { cache: "no-store" });
+  .findOne("entry-id", { status: "draft" }, { cache: "no-store" });
 // or with status
 const drafts = await plank
   .collection("posts")
@@ -284,7 +312,10 @@ with `next: { revalidate }`.
 | `order`       | `'asc' \| 'desc'`                 | —             | Sort direction                                                |
 | `[fieldname]` | `string \| number`                | —             | Equality filter on any content type field                     |
 | `locale`      | `string`                          | —             | Request a localized version of localizable fields (e.g. `es`) |
-| `fallback`    | `string`                          | —             | Comma-separated fallback locale list (e.g. `en,fr`)           |
+| `fallback`    | `string \| string[]`              | —             | Comma-separated fallback locale list (e.g. `en,fr`)           |
+| `fields`      | `string \| string[]`              | —             | Include only specific top-level serialized fields             |
+| `select`      | `string \| string[]`              | —             | Alias of `fields`                                             |
+| `exclude`     | `string \| string[]`              | —             | Remove specific top-level serialized fields                   |
 
 ---
 

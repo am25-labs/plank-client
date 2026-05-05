@@ -7,7 +7,10 @@ export interface PlankParams {
   sort?: string;
   order?: "asc" | "desc";
   locale?: string;
-  fallback?: string;
+  fallback?: string | string[];
+  fields?: string | string[];
+  select?: string | string[];
+  exclude?: string | string[];
   [key: string]: unknown;
 }
 
@@ -30,14 +33,20 @@ export interface CollectionClient<T = unknown> {
   ): Promise<PlankListResponse<T>>;
   findOne(
     id: string,
-    params?: Pick<PlankParams, "status" | "locale" | "fallback">,
+    params?: Pick<
+      PlankParams,
+      "status" | "locale" | "fallback" | "fields" | "select" | "exclude"
+    >,
     options?: PlankCacheOptions,
   ): Promise<T>;
 }
 
 export interface SingleClient<T = unknown> {
   find(
-    params?: Pick<PlankParams, "status" | "locale" | "fallback">,
+    params?: Pick<
+      PlankParams,
+      "status" | "locale" | "fallback" | "fields" | "select" | "exclude"
+    >,
     options?: PlankCacheOptions,
   ): Promise<T>;
 }

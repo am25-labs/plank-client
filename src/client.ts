@@ -26,7 +26,10 @@ export function createPlankClient({
         },
         findOne(
           id: string,
-          params?: Pick<PlankParams, "status" | "locale" | "fallback">,
+          params?: Pick<
+            PlankParams,
+            "status" | "locale" | "fallback" | "fields" | "select" | "exclude"
+          >,
           options?: PlankCacheOptions,
         ) {
           return fetcher<T>(`/${slug}/${id}`, params ?? {}, options);
@@ -37,7 +40,10 @@ export function createPlankClient({
     single<T = unknown>(slug: string) {
       return {
         find(
-          params?: Pick<PlankParams, "status">,
+          params?: Pick<
+            PlankParams,
+            "status" | "locale" | "fallback" | "fields" | "select" | "exclude"
+          >,
           options?: PlankCacheOptions,
         ) {
           return fetcher<T>(`/${slug}`, params, options);
