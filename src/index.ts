@@ -3,6 +3,9 @@ export { buildPlankUrl } from './url.js'
 export type {
   CollectionClient,
   NavigationItem,
+  PlankFieldFilter,
+  PlankFilters,
+  PlankFilterScalar,
   PlankMedia,
   PlankMediaGallery,
   PlankCacheOptions,

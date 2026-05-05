@@ -104,18 +104,20 @@ const homepage = await plank.single("homepage").find({
 
 ### Filtering and sorting
 
-Collection queries accept the built-in public API params plus equality filters for any field
-defined in your content type.
+Collection queries accept the built-in public API params plus a `filters` object for field-based
+querying.
 
 ```ts
 const { data } = await plank.collection("posts").findMany({
   status: "published",
   sort: "published_at",
   order: "desc",
-  category: "news",
-  featured: true,
   locale: "es",
   fallback: "en",
+  filters: {
+    category: { eq: "news" },
+    featured: { eq: true },
+  },
 });
 ```
 
@@ -127,6 +129,27 @@ const posts = await plank.fetch("/posts", {
   sort: "created_at",
   order: "desc",
   author_slug: "alejandro-martir",
+});
+```
+
+Use `filters[field][operator]` semantics through a plain object:
+
+```ts
+const { data } = await plank.collection("categories").findMany({
+  filters: {
+    slug: {
+      in: ["design", "motion", "branding"],
+      nin: ["internal", "archived"],
+    },
+  },
+});
+
+const featuredPosts = await plank.collection("posts").findMany({
+  status: "published",
+  filters: {
+    featured: { eq: true },
+    category: { ne: "drafts" },
+  },
 });
 ```
 
@@ -189,6 +212,8 @@ Notes:
 - `fields`, `select`, and `exclude` are top-level only.
 - They apply to the public serialized response shape, not raw database columns.
 - `select` is an alias of `fields`.
+- `filters` is the standard filtering API.
+- Supported operators are `eq`, `ne`, `in`, and `nin`.
 
 You can still narrow the response locally with TypeScript when useful:
 
@@ -310,7 +335,7 @@ with `next: { revalidate }`.
 | `status`      | `'published' \| 'draft' \| 'all'` | `'published'` | Filter by status                                              |
 | `sort`        | `string`                          | —             | Field name to sort by                                         |
 | `order`       | `'asc' \| 'desc'`                 | —             | Sort direction                                                |
-| `[fieldname]` | `string \| number`                | —             | Equality filter on any content type field                     |
+| `filters`     | `PlankFilters`                    | —             | Field-based filters using operator objects                    |
 | `locale`      | `string`                          | —             | Request a localized version of localizable fields (e.g. `es`) |
 | `fallback`    | `string \| string[]`              | —             | Comma-separated fallback locale list (e.g. `en,fr`)           |
 | `fields`      | `string \| string[]`              | —             | Include only specific top-level serialized fields             |

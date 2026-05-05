@@ -1,4 +1,14 @@
 export type PlankStatus = "published" | "draft" | "all";
+export type PlankFilterScalar = string | number | boolean;
+
+export interface PlankFieldFilter {
+  eq?: PlankFilterScalar;
+  ne?: PlankFilterScalar;
+  in?: PlankFilterScalar[];
+  nin?: PlankFilterScalar[];
+}
+
+export type PlankFilters = Record<string, PlankFieldFilter>;
 
 export interface PlankParams {
   page?: number;
@@ -8,10 +18,10 @@ export interface PlankParams {
   order?: "asc" | "desc";
   locale?: string;
   fallback?: string | string[];
+  filters?: PlankFilters;
   fields?: string | string[];
   select?: string | string[];
   exclude?: string | string[];
-  [key: string]: unknown;
 }
 
 export interface PlankCacheOptions {
