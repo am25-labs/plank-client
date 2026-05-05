@@ -24,8 +24,12 @@ export function createPlankClient({
         findMany(params?: PlankParams, options?: PlankCacheOptions) {
           return fetcher<PlankListResponse<T>>(`/${slug}`, params, options);
         },
-        findOne(id: string, options?: PlankCacheOptions) {
-          return fetcher<T>(`/${slug}/${id}`, {}, options);
+        findOne(
+          id: string,
+          params?: Pick<PlankParams, "status" | "locale" | "fallback">,
+          options?: PlankCacheOptions,
+        ) {
+          return fetcher<T>(`/${slug}/${id}`, params ?? {}, options);
         },
       };
     },

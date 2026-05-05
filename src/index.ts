@@ -3,6 +3,8 @@ export { buildPlankUrl } from './url.js'
 export type {
   CollectionClient,
   NavigationItem,
+  PlankMedia,
+  PlankMediaGallery,
   PlankCacheOptions,
   PlankClient,
   PlankClientConfig,

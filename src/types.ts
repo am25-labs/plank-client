@@ -6,6 +6,8 @@ export interface PlankParams {
   status?: PlankStatus;
   sort?: string;
   order?: "asc" | "desc";
+  locale?: string;
+  fallback?: string;
   [key: string]: unknown;
 }
 
@@ -26,12 +28,16 @@ export interface CollectionClient<T = unknown> {
     params?: PlankParams,
     options?: PlankCacheOptions,
   ): Promise<PlankListResponse<T>>;
-  findOne(id: string, options?: PlankCacheOptions): Promise<T>;
+  findOne(
+    id: string,
+    params?: Pick<PlankParams, "status" | "locale" | "fallback">,
+    options?: PlankCacheOptions,
+  ): Promise<T>;
 }
 
 export interface SingleClient<T = unknown> {
   find(
-    params?: Pick<PlankParams, "status">,
+    params?: Pick<PlankParams, "status" | "locale" | "fallback">,
     options?: PlankCacheOptions,
   ): Promise<T>;
 }
@@ -58,3 +64,14 @@ export interface NavigationItem {
   href: string;
   items?: NavigationItem[];
 }
+
+export interface PlankMedia {
+  id: string | null;
+  url: string;
+  alt: string | null;
+  figcaption: string | null;
+  width: number | null;
+  height: number | null;
+}
+
+export type PlankMediaGallery = PlankMedia[];

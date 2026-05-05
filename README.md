@@ -74,10 +74,108 @@ Fetch a single entry by ID:
 const post = await plank.collection("posts").findOne("entry-id");
 ```
 
+Fetch a single entry with extra public API params:
+
+```ts
+const localizedPost = await plank.collection("posts").findOne("entry-id", {
+  status: "published",
+  locale: "es",
+  fallback: "en",
+}, {
+  cache: "no-store",
+});
+```
+
 ### Single Types
 
 ```ts
 const homepage = await plank.single("homepage").find();
+```
+
+With public API params:
+
+```ts
+const homepage = await plank.single("homepage").find({
+  status: "published",
+  locale: "es",
+  fallback: "en",
+});
+```
+
+### Filtering and sorting
+
+Collection queries accept the built-in public API params plus equality filters for any field
+defined in your content type.
+
+```ts
+const { data } = await plank.collection("posts").findMany({
+  status: "published",
+  sort: "published_at",
+  order: "desc",
+  category: "news",
+  featured: true,
+  locale: "es",
+  fallback: "en",
+});
+```
+
+Low-level fetch works the same way:
+
+```ts
+const posts = await plank.fetch("/posts", {
+  limit: 5,
+  sort: "created_at",
+  order: "desc",
+  author_slug: "alejandro-martir",
+});
+```
+
+Build the public API URL without fetching:
+
+```ts
+const url = plank.buildUrl("/posts", {
+  status: "published",
+  sort: "published_at",
+  order: "desc",
+  category: "news",
+});
+// https://your-plank-instance.com/api/posts?status=published&sort=published_at&order=desc&category=news
+```
+
+### Field selection
+
+The current public API returns the full serialized entry shape for each content type.
+
+Server-side field selection or exclusion is not available yet, so params like `fields`,
+`select`, or `exclude` are not supported by the API today.
+
+If you only need a subset of fields in your app, narrow the type locally:
+
+```ts
+type PostCard = {
+  id: string;
+  title: string;
+  slug: string;
+  cover: PlankMedia | null;
+};
+
+const { data } = await plank.collection<PostCard>("posts").findMany({
+  status: "published",
+  limit: 6,
+});
+```
+
+Or map the full response into a smaller UI model:
+
+```ts
+const { data } = await plank.collection<Post>("posts").findMany();
+
+const cards = data.map((post) => ({
+  id: post.id,
+  title: post.title,
+  slug: post.slug,
+  image: post.cover?.url ?? null,
+}));
 ```
 
 ### Drafts
@@ -134,12 +232,14 @@ await plank.collection("posts").findMany({}, { cache: "no-store" });
 The client is fully typed. Pass your content type interface as a generic to get typed responses:
 
 ```ts
+import type { PlankMedia } from "@plank-cms/client";
+
 interface Post {
   id: string;
   title: string;
   slug: string;
   body: string;
-  cover: { url: string };
+  cover: PlankMedia;
   published_at: string;
 }
 
@@ -149,6 +249,27 @@ const { data } = await plank.collection<Post>("posts").findMany();
 const post = await plank.collection<Post>("posts").findOne("entry-id");
 // post is Post
 ```
+
+Images and galleries now resolve to rich media objects:
+
+```ts
+interface Homepage {
+  hero: PlankMedia;
+  gallery: PlankMedia[];
+}
+```
+
+---
+
+## Framework support
+
+The client is framework-agnostic. It is not tied to React and can be used anywhere standard
+`fetch` is available, including Next.js, Astro, Remix, SvelteKit, Node.js, or plain server-side
+JavaScript/TypeScript.
+
+The only framework-specific part in this README is the caching section: the `cache` and
+`revalidate` examples map especially well to Next.js App Router because Next extends `fetch`
+with `next: { revalidate }`.
 
 ---
 
@@ -163,6 +284,7 @@ const post = await plank.collection<Post>("posts").findOne("entry-id");
 | `order`       | `'asc' \| 'desc'`                 | —             | Sort direction                                                |
 | `[fieldname]` | `string \| number`                | —             | Equality filter on any content type field                     |
 | `locale`      | `string`                          | —             | Request a localized version of localizable fields (e.g. `es`) |
+| `fallback`    | `string`                          | —             | Comma-separated fallback locale list (e.g. `en,fr`)           |
 
 ---
 
